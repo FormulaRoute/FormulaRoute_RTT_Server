@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: MSPM
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+    date-format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
