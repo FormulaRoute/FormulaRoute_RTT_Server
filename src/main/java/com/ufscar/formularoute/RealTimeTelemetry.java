@@ -16,7 +16,7 @@ public class RealTimeTelemetry extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        var root = new AnchorPane();
+        var root = new Interface();
         var antialiasing = Platform.isSupported(ConditionalFeature.EFFECT)
                 ? SceneAntialiasing.BALANCED
                 : SceneAntialiasing.DISABLED;
@@ -25,7 +25,7 @@ public class RealTimeTelemetry extends Application {
 
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
-        scene.getStylesheets().add(getClass().getResource("/mspm/pages/DashboardCSS.css").toString());
+        //scene.getStylesheets().add(getClass().getResource("/mspm/pages/DashboardCSS.css").toString());
 
         stage.setScene(scene);
 

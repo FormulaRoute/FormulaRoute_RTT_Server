@@ -68,7 +68,7 @@ public class Lap {
     @Column(name = "added")
     private ZonedDateTime added = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
 
-    @OneToMany(targetEntity = Parameter.class, mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Parameter.class, mappedBy = "lap", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Parameter> parameters = new ArrayList<>();
 }

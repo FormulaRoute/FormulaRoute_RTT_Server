@@ -71,14 +71,17 @@ dependencies {
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
 
-    // https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-52
-    implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.21.1'
+// https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-60
+    implementation group: 'com.vladmihalcea', name: 'hibernate-types-60', version: '2.21.1'
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.19.0'
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '3.0-rc4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql:42.7.3'
+
 }
 
 test {
@@ -99,7 +102,7 @@ javafx {
     version = "20.0.2"
 }//
 
-mainClassName = "com.brasens.infolance.Main"
+mainClassName = "com.ufscar.formularoute.Main"
 
 jar {
     manifest {
@@ -114,10 +117,10 @@ jar {
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        name = 'com.brasens'
+        name = 'com.ufscar.formularoute'
     }
-    moduleName = 'com.brasens.infolance'
-    mainClass = 'com.brasens.infolance.Main'
+    moduleName = 'com.ufscar.formularoute'
+    mainClass = 'com.ufscar.formularoute.Main'
 }
 
 gluonfx {

@@ -120,7 +120,7 @@ public class MainController {
 
                     // Salva a volta atualizada no banco de dados
                     lapRepository.save(lap);
-
+                    System.out.println("Parametro recabido: "+object);
                     return ResponseEntity.ok("Lap and parameters registered successfully.");
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lap not found.");
@@ -175,6 +175,7 @@ public class MainController {
             Lap savedLap = lapRepository.save(newLap);
 
             // Retorna a volta criada com um status 201 Created
+            System.out.println("Lap criada: " + savedLap.toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(savedLap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -235,8 +236,10 @@ public class MainController {
                 List<Parameter> matchingParameters = lap.getParameters().stream()
                         .filter(param -> param.getKey().equals(key))
                         .collect(Collectors.toList());
-                if (!matchingParameters.isEmpty())
+                if (!matchingParameters.isEmpty()) {
+                    System.out.println(matchingParameters.toString());
                     return ResponseEntity.ok(matchingParameters);
+                }
                 else return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Parameter with key [" + key + "] not found in this lap.");
             } else {
@@ -301,6 +304,7 @@ public class MainController {
                     // Verifica se há parâmetros associados à volta
                     if (!parameters.isEmpty()) {
                         // Retorna os parâmetros encontrados
+                        System.out.println(parameters.toString());
                         return ResponseEntity.ok(parameters);
                     } else {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No parameters found for this lap.");
