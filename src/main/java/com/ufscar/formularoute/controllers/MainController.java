@@ -286,14 +286,13 @@ public class MainController {
          *
          * - 500 Internal Server Error: Se ocorrer algum erro durante o processamento da solicitação.
          *
-         * @param lapName O nome da volta (Lap) no qual os parâmetros serão pesquisados.
          * @return ResponseEntity contendo a lista de parâmetros ou uma mensagem de erro.
          */
-        @GetMapping("/{lapName}/parameters")
-        public ResponseEntity<?> getLapParameters(@PathVariable String lapName) {
+        @GetMapping("/parameters")
+        public ResponseEntity<?> getLapParameters(@RequestParam String lap_name) {
             try {
                 // Busca a volta (Lap) pelo nome
-                Optional<Lap> lapOptional = lapRepository.findByName(lapName);
+                Optional<Lap> lapOptional = lapRepository.findByName(lap_name);
 
                 if (lapOptional.isPresent()) {
                     Lap lap = lapOptional.get();
