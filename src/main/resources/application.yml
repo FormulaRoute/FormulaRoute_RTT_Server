@@ -1,6 +1,6 @@
 spring:
   application:
-    name: MSPM
+    name: RTT
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false

@@ -42,6 +42,6 @@ public class RealTimeTelemetry extends Application {
 
     public static void main(String[] args){
         SpringApplication.run(RealTimeTelemetry.class, args);
-        launch(args);
+        //launch(args);
     }
 }
