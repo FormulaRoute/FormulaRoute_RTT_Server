@@ -5,11 +5,10 @@ plugins {
     id 'org.beryx.jlink' version '2.12.0'
     id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.19'
     id("org.springframework.boot") version "3.5.3"
-
 }
 
 group = "com.ufscar.formularoute"
-version = "1.0-SNAPSHOT"
+version = "1.1-SNAPSHOT"
 
 sourceCompatibility = "17"
 
@@ -34,7 +33,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
     implementation group: 'org.update4j', name: 'update4j', version: '1.5.9'
-    compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     implementation group: 'com.github.wendykierp', name: 'JTransforms', version: '3.0'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
@@ -48,8 +46,13 @@ dependencies {
     implementation group: 'org.kordamp.ikonli', name: 'ikonli-javafx', version: '12.3.1'
     implementation group: 'org.kordamp.ikonli', name: 'ikonli-material2-pack', version: '12.3.1'
     implementation group: 'org.kordamp.ikonli', name: 'ikonli-fontawesome-pack', version: '12.3.1'
-    testCompileOnly 'org.projectlombok:lombok:1.18.26'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
+
+    testCompileOnly("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '3.4.5'
 
@@ -78,7 +81,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '3.0-rc4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.postgresql:postgresql:42.7.3'
-
 }
 
 test {

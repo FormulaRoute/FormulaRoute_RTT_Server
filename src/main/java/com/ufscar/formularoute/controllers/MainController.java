@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufscar.formularoute.dto.Lap;
 import com.ufscar.formularoute.dto.Parameter;
+import com.ufscar.formularoute.dto.ParameterResponse;
+import com.ufscar.formularoute.dto.RegisterParametersRequest;
 import com.ufscar.formularoute.repository.LapRepository;
 import com.ufscar.formularoute.request.LapRequest;
 import lombok.AllArgsConstructor;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/main")
 public class MainController {
 
-    @Autowired
+        @Autowired
     private LapRepository lapRepository;
 
     /**
@@ -81,54 +83,40 @@ public class MainController {
      * @return ResponseEntity com o status da operação (sucesso ou erro).
      */
 
+// Em MainController.java
+
     @PostMapping("/register")
-    public ResponseEntity<String> registerLap(@RequestBody String object) {
+    @Transactional // Adiciona transacionalidade para garantir a consistência da operação
+    public ResponseEntity<String> registerLap(@RequestBody RegisterParametersRequest request) {
         try {
-            // Inicializa o ObjectMapper para manipular JSON
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode requestBody = objectMapper.readTree(object);
+            Optional<Lap> lapOptional = lapRepository.findByName(request.getLapName());
 
-            // Verifica se o JSON contém o campo "lap-name"
-            if (requestBody.has("lap-name")) {
-                String lapName = requestBody.get("lap-name").asText();
-                System.out.println("Lap Name: " + lapName);
+            if (lapOptional.isPresent()) {
+                Lap lap = lapOptional.get();
 
-                // Procura a volta no banco de dados pelo nome
-                Optional<Lap> lapOptional = lapRepository.findByName(lapName);
-
-                if (lapOptional.isPresent()) {
-                    Lap lap = lapOptional.get();
-                    List<Parameter> parameters = new ArrayList<>();
-
-                    // Itera sobre os campos no JSON, exceto "lap-name" (Aqui pega os parametros fornecidos abaixo de lap-name)
-                    requestBody.fields().forEachRemaining(entry -> {
-                        String key = entry.getKey();
-                        String value = entry.getValue().asText();
-
-                        // Ignora o campo "lap-name"
-                        if (!key.equals("lap-name")) {
+                // O mapeamento agora é muito mais simples e seguro
+                List<Parameter> newParameters = request.getParameters().entrySet().stream()
+                        .map(entry -> {
                             Parameter parameter = new Parameter();
-                            parameter.setKey(key);
-                            parameter.setValue(value);
-                            parameter.setAdded(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("America/Sao_Paulo")));
-                            parameters.add(parameter);
-                        }
-                    });
+                            parameter.setKey(entry.getKey());
+                            parameter.setValue(entry.getValue());
+                            // Define a referência da volta no parâmetro
+                            parameter.setLap(lap);
+                            // O timestamp já é definido por padrão na entidade Parameter
+                            return parameter;
+                        })
+                        .collect(Collectors.toList());
 
-                    // Adiciona os parâmetros criados à volta
-                    lap.getParameters().addAll(parameters);
+                // Adiciona os novos parâmetros à lista existente na volta
+                lap.getParameters().addAll(newParameters);
 
-                    // Salva a volta atualizada no banco de dados
-                    lapRepository.save(lap);
-                    System.out.println("Parametro recabido: "+object);
-                    return ResponseEntity.ok("Lap and parameters registered successfully.");
-                } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lap not found.");
-                }
+                // Salva a volta (o CascadeType.ALL cuidará de salvar os novos parâmetros)
+                lapRepository.save(lap);
+
+                return ResponseEntity.ok("Lap and parameters registered successfully.");
             } else {
-                return ResponseEntity.badRequest().body("Missing lap-name in the request.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lap not found.");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
@@ -233,12 +221,14 @@ public class MainController {
                 Lap lap = lapOptional.get();
 
                 // Filtra os parâmetros com a Key fornecida
-                List<Parameter> matchingParameters = lap.getParameters().stream()
-                        .filter(param -> param.getKey().equals(key))
+                List<Parameter> matchingParameters = new ArrayList<>();
+                List<ParameterResponse> response = matchingParameters.stream()
+                        .map(ParameterResponse::new)
                         .collect(Collectors.toList());
+
                 if (!matchingParameters.isEmpty()) {
-                    System.out.println(matchingParameters.toString());
-                    return ResponseEntity.ok(matchingParameters);
+                    System.out.println(response.toString());
+                    return ResponseEntity.ok(response);
                 }
                 else return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Parameter with key [" + key + "] not found in this lap.");
@@ -288,33 +278,28 @@ public class MainController {
          *
          * @return ResponseEntity contendo a lista de parâmetros ou uma mensagem de erro.
          */
-        @GetMapping("/parameters")
-        public ResponseEntity<?> getLapParameters(@RequestParam String lap_name) {
-            try {
-                // Busca a volta (Lap) pelo nome
-                Optional<Lap> lapOptional = lapRepository.findByName(lap_name);
+// Em MainController.java
 
-                if (lapOptional.isPresent()) {
-                    Lap lap = lapOptional.get();
+    /**
+     * Endpoint para buscar todos os parâmetros de uma volta específica (Lap).
+     * Exemplo de URL: GET /main/Volta%201/parameters
+     */
+    @GetMapping("/{lapName}/parameters")
+    public ResponseEntity<?> getLapParameters(@PathVariable String lapName) {
+        Optional<Lap> lapOptional = lapRepository.findByName(lapName);
 
-                    // Obtém a lista de parâmetros associados à volta (Lap)
-                    List<Parameter> parameters = lap.getParameters();
+        if (lapOptional.isPresent()) {
+            Lap lap = lapOptional.get();
+            List<Parameter> parameters = lap.getParameters();
 
-                    // Verifica se há parâmetros associados à volta
-                    if (!parameters.isEmpty()) {
-                        // Retorna os parâmetros encontrados
-                        System.out.println(parameters.toString());
-                        return ResponseEntity.ok(parameters);
-                    } else {
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No parameters found for this lap.");
-                    }
-                } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lap not found.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+            if (parameters.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No parameters found for this lap.");
             }
+            // Idealmente, aqui também retornaria um DTO
+            return ResponseEntity.ok(parameters);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lap not found.");
         }
+    }
 
 }

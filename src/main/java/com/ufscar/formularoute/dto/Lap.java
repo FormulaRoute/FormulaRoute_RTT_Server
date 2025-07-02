@@ -47,13 +47,14 @@ No lado do frontend, quando um usuário deseja visualizar ou analisar uma volta 
 Essa estrutura robusta permite uma análise detalhada das voltas de forma eficiente e organizada, facilitando a manipulação de grandes volumes de dados e permitindo análises avançadas de desempenho.
 */
 
-
 @Entity
 @Table(name="lap")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@NamedEntityGraph(
+        name = "Lap.withParameters",
+        attributeNodes = @NamedAttributeNode("parameters")
+)
 public class Lap {
     @Id
     @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")

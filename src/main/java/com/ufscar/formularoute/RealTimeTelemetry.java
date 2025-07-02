@@ -29,8 +29,6 @@ public class RealTimeTelemetry extends Application {
 
         stage.setScene(scene);
 
-        stage.setScene(scene);
-
         stage.setOnCloseRequest(event -> {
             Platform.exit();
             System.exit(0);
