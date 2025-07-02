@@ -155,6 +155,11 @@ public class MainController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lap name is required.");
             }
 
+            if(lapRepository.findByName(lapRequest.getName()).isPresent()){
+                System.out.println("Ja existe lap com esse nome");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lap name already exist.");
+            }
+
             // Cria uma nova instância de Lap
             Lap newLap = new Lap();
             newLap.setName(lapRequest.getName());
