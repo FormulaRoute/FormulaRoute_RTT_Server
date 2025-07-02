@@ -79,7 +79,7 @@ public class MainController {
      * <p>
      * - 500 Internal Server Error: Se ocorrer algum erro durante o processamento da solicitação.
      *
-     * @param object JSON contendo o nome da volta e os parâmetros de telemetria.
+     *
      * @return ResponseEntity com o status da operação (sucesso ou erro).
      */
 
