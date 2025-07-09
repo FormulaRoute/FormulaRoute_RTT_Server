@@ -83,10 +83,8 @@ public class MainController {
      * @return ResponseEntity com o status da operação (sucesso ou erro).
      */
 
-// Em MainController.java
-
     @PostMapping("/register")
-    @Transactional // Adiciona transacionalidade para garantir a consistência da operação
+    @Transactional
     public ResponseEntity<String> registerLap(@RequestBody RegisterParametersRequest request) {
         try {
             Optional<Lap> lapOptional = lapRepository.findByName(request.getLapName());
@@ -94,23 +92,17 @@ public class MainController {
             if (lapOptional.isPresent()) {
                 Lap lap = lapOptional.get();
 
-                // O mapeamento agora é muito mais simples e seguro
                 List<Parameter> newParameters = request.getParameters().entrySet().stream()
                         .map(entry -> {
                             Parameter parameter = new Parameter();
                             parameter.setKey(entry.getKey());
                             parameter.setValue(entry.getValue());
-                            // Define a referência da volta no parâmetro
                             parameter.setLap(lap);
-                            // O timestamp já é definido por padrão na entidade Parameter
                             return parameter;
                         })
                         .collect(Collectors.toList());
 
-                // Adiciona os novos parâmetros à lista existente na volta
                 lap.getParameters().addAll(newParameters);
-
-                // Salva a volta (o CascadeType.ALL cuidará de salvar os novos parâmetros)
                 lapRepository.save(lap);
 
                 return ResponseEntity.ok("Lap and parameters registered successfully.");
